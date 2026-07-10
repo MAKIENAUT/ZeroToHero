@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Full Stack Rebuild Roadmap</title>
+  <style>
+    :root {
+      --bg: #050505;
+      --sidebar: #050505;
+      --surface: #111111;
+      --surface-2: #171717;
+      --surface-3: #1b1b1b;
+      --line: #2a2a2a;
+      --line-soft: rgba(255,255,255,.09);
+      --text: #f5f5f5;
+      --muted: #c7c7c7;
+      --faint: #8e8e8e;
+      --accent: #c99a2e;
+      --accent-2: #f2d27a;
+      --accent-soft: rgba(201, 154, 46, .08);
+      --accent-line: rgba(242, 210, 122, .22);
+      --good: #93d38d;
+      --good-soft: rgba(147, 211, 141, .10);
+      --blue-soft: rgba(255,255,255,.04);
+      --blue-line: rgba(255,255,255,.12);
+      --shadow: rgba(0,0,0,.26);
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    button, input { font: inherit; }
+
+    button,
+    input,
+    .nav-chip {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .app {
+      height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background: var(--sidebar);
+      border-right: 1px solid var(--line);
+      box-shadow: 14px 0 42px var(--shadow);
+      min-width: 0;
+    }
+
+    .brand-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      padding: 20px 18px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .sidebar-toggle {
+      display: none;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 7px 10px;
+      font-size: .72rem;
+      font-weight: 850;
+      line-height: 1;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .sidebar-toggle:hover {
+      border-color: var(--accent-line);
+      background: var(--surface-2);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .15em;
+      font-weight: 950;
+      font-size: .68rem;
+      margin-bottom: 9px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 25px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.38rem;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    .brand p {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: .88rem;
+    }
+
+    .stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 13px;
+    }
+
+    .pill {
+      padding: 5px 8px;
+      border-radius: 999px;
+      color: var(--accent-2);
+      border: 1px solid var(--accent-line);
+      background: var(--accent-soft);
+      font-size: .72rem;
+      font-weight: 850;
+    }
+
+    .progress {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+    }
+
+    .sidebar-body {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      flex-direction: column;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .78rem;
+      font-weight: 850;
+      margin-bottom: 9px;
+    }
+
+    .progress-row strong {
+      color: var(--text);
+      font-size: 1.28rem;
+    }
+
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #090705;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition: width .2s ease;
+    }
+
+    .progress-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 11px;
+    }
+
+    .utility-btn {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 11px;
+      padding: 8px;
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 850;
+    }
+
+    .utility-btn:hover {
+      border-color: var(--accent-line);
+      background: var(--surface-2);
+    }
+
+    .nav {
+      flex: 1;
+      overflow: auto;
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+      align-content: start;
+    }
+
+    .nav-desktop {
+      display: grid;
+      gap: 6px;
+    }
+
+    .nav-mobile {
+      display: none;
+    }
+
+    .nav-title {
+      color: var(--faint);
+      font-size: .66rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      padding: 10px 8px 4px;
+    }
+
+    .nav button {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr) 48px;
+      align-items: center;
+      gap: 8px;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      padding: 9px;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .nav button:hover {
+      background: rgba(255,255,255,.045);
+      border-color: var(--accent-line);
+      color: var(--text);
+    }
+
+    .nav button.active {
+      background: var(--accent-soft);
+      border-color: var(--accent-line);
+      color: var(--text);
+    }
+
+    .nav .num {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.04);
+      color: var(--accent-2);
+      font-weight: 950;
+      font-size: .76rem;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .nav .label { min-width: 0; }
+
+    .nav .label b {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: .83rem;
+      line-height: 1.12;
+    }
+
+    .nav .label span {
+      display: block;
+      color: var(--faint);
+      font-size: .72rem;
+      margin-top: 3px;
+    }
+
+    .nav .done {
+      justify-self: end;
+      color: var(--faint);
+      font-size: .72rem;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .nav-current {
+      display: grid;
+      gap: 4px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+    }
+
+    .nav-current-label {
+      color: var(--faint);
+      font-size: .58rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav-current-title {
+      color: var(--text);
+      font-size: .9rem;
+      font-weight: 850;
+      line-height: 1.15;
+    }
+
+    .nav-current-meta {
+      color: var(--muted);
+      font-size: .72rem;
+    }
+
+    .nav-mobile-row {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-current-actions {
+      display: none;
+    }
+
+    .nav-current-btn {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 10px;
+      min-height: 34px;
+      padding: 7px 10px;
+      font-size: .72rem;
+      font-weight: 850;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .nav-current-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .nav-mobile-title {
+      color: var(--faint);
+      font-size: .58rem;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .nav-chip-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .nav-chip {
+      width: 100%;
+      display: block;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      border-radius: 10px;
+      min-height: 34px;
+      padding: 6px 4px;
+      font-size: .72rem;
+      font-weight: 900;
+      text-align: center;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .nav-chip.active {
+      color: var(--text);
+      border-color: var(--accent-line);
+      background: var(--accent-soft);
+    }
+
+    .nav-chip.meta {
+      font-size: .68rem;
+      letter-spacing: .02em;
+    }
+
+    .main {
+      height: 100vh;
+      height: 100dvh;
+      overflow: auto;
+      padding: 22px;
+      overscroll-behavior: contain;
+    }
+
+    .page {
+      width: min(1320px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+      padding-bottom: 28px;
+    }
+
+    .page-head {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      padding: clamp(18px, 2vw, 26px);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.018)),
+        var(--surface);
+      box-shadow: 0 16px 38px var(--shadow);
+    }
+
+    .page-head .date {
+      color: var(--accent-2);
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      font-size: .74rem;
+      font-weight: 950;
+      margin-bottom: 10px;
+    }
+
+    .page-head h2 {
+      margin: 0;
+      max-width: 980px;
+      font-size: clamp(2rem, 3.4vw, 3.7rem);
+      line-height: 1.02;
+      letter-spacing: -.06em;
+    }
+
+    .theme {
+      color: #e8e8e8;
+      font-size: 1.02rem;
+      font-weight: 740;
+      margin: 13px 0 0;
+      max-width: 920px;
+    }
+
+    .head-actions {
+      display: grid;
+      grid-template-columns: auto auto;
+      gap: 9px;
+    }
+
+    .page-nav-btn {
+      border: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      border-radius: 13px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .page-nav-btn:hover:not(:disabled) {
+      border-color: var(--accent-line);
+    }
+
+    .page-nav-btn:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .focus-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+
+    .summary-card {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.025);
+      padding: 15px;
+      transition: border-color .18s ease, background .18s ease, transform .18s ease;
+    }
+
+    .summary-card:hover {
+      border-color: var(--accent-line);
+      background: rgba(255,255,255,.038);
+      transform: translateY(-1px);
+    }
+
+    .summary-card b {
+      display: block;
+      color: var(--accent-2);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-size: .72rem;
+      margin-bottom: 7px;
+    }
+
+    .summary-card p {
+      color: var(--muted);
+      margin: 0;
+      font-size: .92rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 410px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .left, .right {
+      display: grid;
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      background: rgba(14, 14, 14, .94);
+      box-shadow: 0 14px 32px var(--shadow);
+      overflow: hidden;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(242, 210, 122, .16);
+      box-shadow: 0 18px 38px rgba(0,0,0,.32);
+    }
+
+    .card-head {
+      padding: 14px 17px;
+      background: rgba(255,255,255,.025);
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .card-head h3 {
+      margin: 0;
+      font-size: .98rem;
+      letter-spacing: -.02em;
+    }
+
+    .card-head span {
+      color: var(--faint);
+      font-size: .78rem;
+    }
+
+    .card-body { padding: 17px; }
+
+    .why {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-line);
+      color: var(--muted);
+      border-radius: var(--radius-md);
+      padding: 15px;
+      margin-bottom: 15px;
+      font-size: .94rem;
+    }
+
+    .why b {
+      display: block;
+      color: var(--accent-2);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-size: .72rem;
+      margin-bottom: 6px;
+    }
+
+    .study-list {
+      display: grid;
+      gap: 11px;
+    }
+
+    .study-item {
+      display: grid;
+      grid-template-columns: 170px minmax(0, 1fr);
+      gap: 14px;
+      padding-bottom: 11px;
+      border-bottom: 1px dashed rgba(255,255,255,.09);
+    }
+
+    .study-item:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .study-item b {
+      color: var(--text);
+      font-size: .91rem;
+      line-height: 1.25;
+    }
+
+    .study-item p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .92rem;
+    }
+
+    .todo-list,
+    .checklist {
+      display: grid;
+      gap: 9px;
+    }
+
+    .todo-item,
+    .checklist label {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+      padding: 11px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      color: var(--muted);
+      font-size: .9rem;
+      transition: .15s ease;
+    }
+
+    .todo-item:hover,
+    .checklist label:hover {
+      background: rgba(255,255,255,.045);
+      border-color: var(--accent-line);
+    }
+
+    .todo-item.done,
+    .checklist label.done {
+      color: var(--faint);
+      background: rgba(147,211,141,.055);
+      border-color: rgba(147,211,141,.16);
+    }
+
+    .todo-item input,
+    .checklist input {
+      accent-color: var(--accent);
+      transform: translateY(3px);
+    }
+
+    .todo-item span,
+    .checklist span {
+      min-width: 0;
+    }
+
+    .drills {
+      margin: 0;
+      padding-left: 20px;
+      color: var(--muted);
+    }
+
+    .drills li {
+      margin: 10px 0;
+      padding-left: 3px;
+      font-size: .93rem;
+    }
+
+    .info {
+      border: 1px solid var(--line-soft);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.025);
+      padding: 15px;
+    }
+
+    .info.good {
+      background: var(--good-soft);
+      border-color: rgba(147,211,141,.24);
+    }
+
+    .info.ai {
+      background: var(--accent-soft);
+      border-color: var(--accent-line);
+    }
+
+    .info b {
+      display: block;
+      color: var(--accent-2);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      font-size: .72rem;
+      margin-bottom: 7px;
+    }
+
+    .info.good b { color: var(--good); }
+
+    .info p {
+      color: var(--muted);
+      margin: 0;
+      font-size: .91rem;
+    }
+
+    .review-template {
+      white-space: pre-wrap;
+      background: #090807;
+      border: 1px solid var(--line);
+      color: #eadfca;
+      border-radius: var(--radius-md);
+      padding: 15px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .86rem;
+      overflow: auto;
+    }
+
+    .footer-note {
+      color: var(--faint);
+      font-size: .8rem;
+      padding: 0 2px;
+    }
+
+    @media (max-width: 1160px) {
+      body { overflow: auto; }
+
+      .app {
+        height: auto;
+        min-height: 100vh;
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        height: auto;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand { padding-bottom: 12px; }
+
+      .progress { display: none; }
+
+      .nav {
+        display: block;
+        overflow: visible;
+        padding: 8px;
+      }
+
+      .nav-title { display: none; }
+
+      .nav-desktop {
+        display: flex;
+        overflow-x: auto;
+        gap: 8px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .nav-desktop::-webkit-scrollbar { display: none; }
+
+      .nav-desktop button {
+        min-width: 220px;
+        scroll-snap-align: start;
+      }
+
+      .main {
+        height: auto;
+        overflow: visible;
+        padding: 14px;
+      }
+
+      .layout,
+      .focus-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .sidebar {
+        position: sticky;
+        top: 0;
+        z-index: 24;
+        box-shadow: 0 10px 20px rgba(0,0,0,.26);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        position: static;
+        background: rgba(5, 5, 5, .96);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      .sidebar-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .sidebar.is-collapsed .sidebar-body {
+        display: none;
+      }
+
+      .brand {
+        padding: 12px 12px 10px;
+      }
+
+      .brand p {
+        font-size: .76rem;
+      }
+
+      .stack {
+        gap: 4px;
+        margin-top: 8px;
+      }
+
+      .pill {
+        font-size: .64rem;
+        padding: 3px 6px;
+      }
+
+      .progress {
+        display: block;
+        padding: 10px 12px;
+      }
+
+      .progress-row {
+        font-size: .72rem;
+        margin-bottom: 7px;
+      }
+
+      .progress-row strong {
+        font-size: .98rem;
+      }
+
+      .page-head {
+        grid-template-columns: 1fr;
+        position: sticky;
+        top: 8px;
+        z-index: 12;
+        padding: 13px;
+        gap: 10px;
+        background: rgba(17, 17, 17, .94);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 12px 24px rgba(0,0,0,.3);
+      }
+
+      .head-actions {
+        grid-template-columns: 1fr 1fr;
+        gap: 7px;
+      }
+
+      .page-nav-btn {
+        width: 100%;
+        min-height: 38px;
+        padding: 8px 10px;
+        font-size: .82rem;
+      }
+
+      .nav {
+        padding: 6px 8px 8px;
+      }
+
+      .nav-desktop {
+        display: none;
+      }
+
+      .nav-mobile {
+        display: grid;
+        gap: 8px;
+      }
+
+      .nav-current {
+        padding: 9px 10px;
+        gap: 6px;
+      }
+
+      .nav-current-title {
+        font-size: .82rem;
+      }
+
+      .nav-current-meta {
+        font-size: .68rem;
+      }
+
+      .nav-chip-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 5px;
+      }
+
+      .nav-current-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 2px;
+      }
+
+      .nav-chip {
+        min-height: 30px;
+        padding: 5px 2px;
+        font-size: .66rem;
+      }
+
+      .page-head {
+        display: none;
+      }
+
+      .page {
+        gap: 10px;
+        padding-bottom: 18px;
+      }
+
+      .focus-strip {
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(210px, 78vw);
+        grid-template-columns: none;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .focus-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      .summary-card {
+        scroll-snap-align: start;
+      }
+
+      .page-head h2 {
+        font-size: clamp(1.45rem, 6.8vw, 2rem);
+      }
+
+      .theme {
+        font-size: .87rem;
+        margin-top: 9px;
+      }
+
+      .summary-card,
+      .info,
+      .why,
+      .review-template {
+        padding: 11px;
+      }
+
+      .card-head,
+      .card-body {
+        padding: 12px;
+      }
+
+      .study-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+        padding-bottom: 9px;
+      }
+
+      .todo-item,
+      .checklist label {
+        padding: 8px 10px;
+        font-size: .84rem;
+      }
+
+      .drills li {
+        margin: 8px 0;
+        font-size: .87rem;
+      }
+
+      .main { padding: 8px; }
+
+      .page-head,
+      .card {
+        border-radius: 14px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .eyebrow {
+        font-size: .56rem;
+      }
+
+      h1 {
+        font-size: 1.02rem;
+      }
+
+      .brand p {
+        display: none;
+      }
+
+      .progress-actions {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+
+      .utility-btn,
+      .page-nav-btn {
+        min-height: 38px;
+        padding: 7px 9px;
+        font-size: .78rem;
+      }
+
+      .nav {
+        padding: 6px 6px 8px;
+      }
+
+      .nav-current {
+        padding: 8px 9px;
+        border-radius: 12px;
+      }
+
+      .nav-current-label,
+      .nav-mobile-title {
+        font-size: .54rem;
+      }
+
+      .nav-current-title {
+        font-size: .76rem;
+      }
+
+      .nav-current-meta {
+        font-size: .64rem;
+      }
+
+      .nav-chip-grid {
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .nav-chip {
+        min-height: 28px;
+        border-radius: 9px;
+        padding: 4px 1px;
+        font-size: .62rem;
+      }
+
+      .nav-chip.meta {
+        font-size: .58rem;
+      }
+
+      .nav-current-btn {
+        min-height: 30px;
+        padding: 6px 8px;
+        font-size: .66rem;
+      }
+
+      .sidebar-toggle {
+        padding: 6px 8px;
+        font-size: .68rem;
+      }
+
+      .main {
+        padding: 6px;
+      }
+
+      .page-head {
+        padding: 11px;
+        top: 6px;
+      }
+
+      .page-head .date,
+      .summary-card b,
+      .why b,
+      .info b {
+        font-size: .62rem;
+        margin-bottom: 5px;
+      }
+
+      .page-head h2 {
+        font-size: clamp(1.25rem, 7.4vw, 1.62rem);
+      }
+
+      .theme,
+      .summary-card p,
+      .study-item p,
+      .info p,
+      .why,
+      .drills li {
+        font-size: .8rem;
+      }
+
+      .card-head h3 {
+        font-size: .84rem;
+      }
+
+      .review-template {
+        font-size: .72rem;
+        padding: 10px;
+      }
+
+      .summary-card,
+      .info,
+      .why {
+        padding: 10px;
+      }
+
+      .focus-strip {
+        grid-auto-columns: minmax(190px, 82vw);
+        gap: 8px;
+      }
+
+      .card-head,
+      .card-body {
+        padding: 10px;
+      }
+
+      .todo-item,
+      .checklist label {
+        grid-template-columns: 20px minmax(0, 1fr);
+        gap: 8px;
+        padding: 7px 8px;
+        font-size: .8rem;
+      }
+
+      .study-item b,
+      .drills,
+      .footer-note {
+        font-size: .8rem;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+        color: #111;
+        overflow: visible;
+      }
+
+      .app { display: block; }
+
+      .sidebar,
+      .head-actions {
+        display: none;
+      }
+
+      .main {
+        height: auto;
+        overflow: visible;
+      }
+
+      .page {
+        width: 100%;
+      }
+
+      .page-head,
+      .card,
+      .info {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-head">
+          <div>
+            <div class="eyebrow">One-Year Roadmap</div>
+            <h1>Full Stack Rebuild</h1>
+          </div>
+          <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true" aria-controls="roadmapControls">Hide</button>
+        </div>
+        <p>Relearn Docker, Laravel, ReactJS, and PostgreSQL through monthly projects, drills, and independent problem-solving.</p>
+        <div class="stack">
+          <span class="pill">Docker</span>
+          <span class="pill">Laravel</span>
+          <span class="pill">ReactJS</span>
+          <span class="pill">PostgreSQL</span>
+          <span class="pill">Testing</span>
+          <span class="pill">Security</span>
+        </div>
+      </div>
+
+      <div class="sidebar-body" id="roadmapControls">
+        <div class="progress">
+          <div class="progress-row">
+            <span>Total roadmap progress</span>
+            <strong id="progressText">0%</strong>
+          </div>
+          <div class="bar"><span id="progressBar"></span></div>
+          <div class="progress-actions">
+            <button class="utility-btn" id="overviewBtn" type="button">Overview</button>
+            <button class="utility-btn" id="resetBtn" type="button">Reset</button>
+          </div>
+        </div>
+
+        <nav class="nav" id="sideNav" aria-label="Roadmap navigation"></nav>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="page" id="page"></section>
+    </main>
+  </div>
+
+  <script>
+    const pages = [{"id": "overview", "kind": "meta", "nav": "Overview", "date": "Start Here", "title": "Roadmap Overview", "theme": "A one-year practical training system for rebuilding full-stack skill without becoming dependent on AI.", "why": "This roadmap is designed to make you stronger at understanding, debugging, building, testing, and shipping. It is not a tutorial playlist. Each month has a purpose, a working output, and a review loop.", "study": [["Learning loop", "Learn the concept, build the smallest useful version, intentionally break it, debug it, test it, document it, then refactor."], ["Monthly output", "Every month must end with a real artifact: a repo, demo, test suite, diagram, deployment, or documented feature."], ["Minimal AI", "AI can clarify concepts, review your plan, and help debug, but it should not directly complete the work for you."], ["Year-end target", "By the end, you should be able to design, build, test, deploy, and explain a production-style full-stack application."]], "todos": ["Create a yearly workspace folder for code, notes, diagrams, bug journal, and monthly reviews.", "Create a README that explains your stack, rules, schedule, and target outcome.", "Set a weekly study/build schedule with at least 3 focused blocks.", "Create a bug-journal.md file before starting Month 1.", "Choose where you will track progress: this HTML, Obsidian, Notion, or README checklists."], "drills": ["Write a short explanation of why you are relearning this stack.", "Write your personal AI usage rules in your own words.", "List your current weak areas in Docker, Laravel, ReactJS, PostgreSQL, testing, and deployment.", "Create a baseline self-assessment: beginner, okay, strong, or weak for each stack area."], "project": "Set up the yearly workspace and create the first README for your learning system.", "outcome": "You start with a clear operating system for learning, not just a list of technologies.", "no_ai": "Before asking AI anything, write your own current understanding and your specific blocker."}, {"id": "rules", "kind": "meta", "nav": "Rules", "date": "Learning Rules", "title": "Minimal-AI Learning Rules", "theme": "These rules keep AI as a guide, not a replacement for your own engineering judgment.", "why": "The main danger is not using AI. The danger is letting AI remove the struggle that creates real skill. These rules force you to read, attempt, debug, explain, and review before relying on assistance.", "study": [["Docs first, AI second", "Read official docs, error output, source code, or your own notes before asking AI."], ["Thirty-minute struggle rule", "When stuck, spend focused time reproducing the issue, isolating the layer, reading logs, and writing a hypothesis."], ["No copy-paste coding", "Use AI for hints, explanations, and review. Type and understand the final code yourself."], ["Explain before building", "Write the data model, request flow, UI state, failure cases, and tests before implementing meaningful features."], ["Bug journal", "Every bug should produce a reusable note: symptom, cause, fix, prevention, and lesson."], ["Ship monthly", "Every month must produce something runnable or demonstrable."]], "todos": ["Write these rules into your own learning-contract.md file.", "Add a 30-minute debugging checklist to your notes.", "Create a bug journal template.", "Create a feature planning template.", "At the end of every month, list what you can now do without AI."], "drills": ["Take one old bug you remember and write a bug journal entry for it.", "Take one planned feature and write its model, request flow, UI states, and tests before coding.", "Ask AI one concept question, then rewrite the answer in your own words.", "Build one tiny feature without any AI help."], "project": "Create learning-contract.md, bug-journal.md, and feature-plan-template.md.", "outcome": "You have practical guardrails that make AI useful without weakening your independence.", "no_ai": "Do not ask AI to solve a problem until you can describe what you tried and what you think is happening."}, {"id": "m1", "date": "July 2026", "title": "Web Fundamentals + Developer Workflow", "theme": "Rebuild the mental model of how the web works before touching framework magic.", "why": "A lot of full-stack confusion comes from not knowing which layer is responsible for a problem. This month trains you to identify whether an issue belongs to the browser, HTTP, frontend runtime, backend runtime, database, Docker network, or operating system.", "study": [["HTTP lifecycle", "Request/response flow, headers, cookies, status codes, CORS, JSON, caching, redirects, and browser devtools."], ["JavaScript refresh", "Variables, modules, objects, arrays, async/await, promises, fetch, error handling, closures, and ES module imports."], ["TypeScript refresh", "Basic types, interfaces, type aliases, unions, narrowing, generics, utility types, and typing API responses."], ["Git discipline", "Branching, commits, diffs, stash, revert, reset, cherry-pick, merge conflicts, rebase, and clean commit messages."], ["Linux/CLI workflow", "Navigation, permissions, processes, ports, environment variables, logs, shell scripts, and aliases."], ["Docker basics", "Image, container, volume, bind mount, network, Dockerfile, Docker Compose, logs, exec, and port mapping."]], "todos": ["Create a repo named fullstack-rebuild-lab.", "Create folders: notes, diagrams, exercises, docker-labs, and monthly-review.", "Draw the browser → backend → database request lifecycle.", "Create a static HTML page that calls a simple backend endpoint.", "Run PostgreSQL inside Docker Compose and connect to it from your host machine.", "Practice 10 Git recovery scenarios and document the commands used.", "Write your Month 1 review with weak points and next actions."], "drills": ["Use devtools to inspect request headers, response headers, cookies, payloads, and errors.", "Break a Docker container on purpose, then recover it using logs and exec.", "Create and resolve one fake merge conflict.", "Write a short note explaining image vs container vs volume vs network."], "project": "Create a Dockerized hello-full-stack repo with a static frontend, a small backend endpoint, and PostgreSQL running in Compose. Do not use Laravel or ReactJS yet. The purpose is to understand the plumbing.", "outcome": "You can explain the full request lifecycle, debug basic local environment problems, and use Git/Docker without panic.", "no_ai": "Use AI only after writing your own error analysis: expected behavior, actual behavior, command run, error output, and your hypothesis."}, {"id": "m2", "date": "August 2026", "title": "PostgreSQL + Data Modeling", "theme": "Learn to design data intentionally before an ORM hides the database from you.", "why": "Laravel and ReactJS apps are only as good as their data model. If tables, relationships, constraints, and queries are weak, the app becomes fragile even if the UI looks good.", "study": [["Schema design", "Tables, primary keys, foreign keys, unique constraints, check constraints, defaults, nullable fields, and naming conventions."], ["CRUD SQL", "INSERT, SELECT, UPDATE, DELETE, WHERE, ORDER BY, LIMIT/OFFSET, RETURNING, and transactions."], ["Joins", "INNER, LEFT, RIGHT, FULL, self joins, many-to-many join tables, and reading join results."], ["Aggregation", "COUNT, SUM, AVG, MIN/MAX, GROUP BY, HAVING, date grouping, and conditional aggregates."], ["Data integrity", "Cascade behavior, restrict behavior, soft delete tradeoffs, audit fields, and status columns."], ["Indexes", "Basic btree indexes, composite indexes, when not to index, and how indexes affect writes."]], "todos": ["Design an ERD for users, roles, permissions, projects, tasks, comments, attachments, and audit logs.", "Create schema.sql with primary keys, foreign keys, unique constraints, check constraints, and defaults.", "Create seed.sql with realistic data.", "Write 30 SQL query exercises manually.", "Write at least 5 join queries and explain what each join keeps or removes.", "Create one transaction example that inserts related records safely.", "Write a short note on when to use nullable fields vs separate tables."], "drills": ["Create bad data intentionally, then prevent it using constraints.", "Compare one-to-many and many-to-many designs using diagrams.", "Add and remove indexes, then reason about why they may or may not help.", "Use psql or TablePlus to inspect tables, constraints, and relationships."], "project": "Build a PostgreSQL-only task management database with schema.sql, seed.sql, query-exercises.sql, and an ERD. Include realistic constraints and sample data.", "outcome": "You can design tables, explain relationships, write practical SQL, and understand why constraints belong in the database.", "no_ai": "AI may review your schema, but only after you explain your cardinality choices and constraint decisions yourself."}, {"id": "m3", "date": "September 2026", "title": "Laravel API Fundamentals", "theme": "Turn your database understanding into a clean, testable backend API.", "why": "This month connects Laravel concepts to real backend responsibilities: routing, validation, persistence, responses, and tests. The goal is not just making endpoints work, but making them predictable and maintainable.", "study": [["Laravel structure", "Routes, controllers, models, migrations, seeders, factories, config, env, service container, and artisan commands."], ["Eloquent basics", "Models, relationships, fillable/guarded, casts, accessors/mutators, scopes, eager loading, and pagination."], ["Validation", "Form Requests, validation rules, custom messages, nested payloads, and consistent error responses."], ["API responses", "Resources, collections, status codes, response envelopes, pagination metadata, and error format."], ["Testing", "Feature tests, database refresh, factories, auth simulation, validation tests, and JSON assertions."], ["Dockerized Laravel", "PHP-FPM, Nginx, PostgreSQL service, Composer dependencies, storage permissions, and env separation."]], "todos": ["Create a Laravel backend project inside /backend.", "Connect Laravel to PostgreSQL through Docker Compose.", "Create migrations for projects, tasks, comments, tags, and activity logs.", "Create factories and seeders for realistic development data.", "Build CRUD endpoints for projects and tasks.", "Add Form Request validation for create/update endpoints.", "Add API Resources for consistent JSON responses.", "Write feature tests for CRUD, validation failures, and not-found responses."], "drills": ["Write validation tests before implementing at least 3 endpoints.", "Create an N+1 issue intentionally, then fix it using eager loading.", "Document every endpoint with request, response, validation, and error examples.", "Use artisan commands to inspect routes, run migrations, seed data, and execute tests."], "project": "Create a Laravel Task API with projects, tasks, comments, tags, and activity logs. It should run with Docker Compose and include feature tests.", "outcome": "You can build and test a Laravel JSON API without relying on tutorials or generated code blindly.", "no_ai": "Do not ask AI to write controllers. Ask for review after you have a working endpoint and tests."}, {"id": "m4", "date": "October 2026", "title": "Laravel Auth, Authorization + Backend Depth", "theme": "Move beyond CRUD into real application backend behavior.", "why": "Most real apps need authentication, permissions, background work, rate limits, audit trails, and consistent failure handling. This month makes your backend feel like a real product service.", "study": [["Authentication", "Session auth vs token auth, Laravel guards/providers, API auth concepts, cookies, CSRF, and login/logout lifecycle."], ["Authorization", "Policies, gates, role-based permissions, ownership checks, admin actions, and preventing IDOR."], ["Queues and jobs", "Queued jobs, retries, failed jobs, idempotency, timeouts, and queue workers in Docker."], ["Events", "Events/listeners, domain events, notification triggers, and decoupling side effects."], ["Rate limiting", "Login throttling, API throttling, abuse prevention, lockout behavior, and user feedback."], ["Audit logs", "Actor, action, subject, metadata, before/after values, IP/user-agent, and filtering logs."]], "todos": ["Add login and logout endpoints.", "Protect project/task/comment endpoints behind authentication.", "Create roles: admin, manager, member, and viewer.", "Create policies for project ownership and task modification.", "Add permission-denied tests for each role.", "Create audit logs for create, update, delete, login, failed login, and permission denied.", "Add a queued notification when a task is assigned.", "Add rate limiting for login and selected API routes."], "drills": ["Try accessing another user’s project by changing the ID.", "Try updating a task as a viewer and confirm the backend blocks it.", "Force a queued job to fail and inspect failed job behavior.", "Write a permission matrix before implementing policies."], "project": "Upgrade the Laravel API into a secure backend with auth, RBAC, queues, notifications, audit logs, and tests for permission failures.", "outcome": "You can reason about backend security and user actions instead of only building happy-path CRUD.", "no_ai": "AI can explain security concepts, but you must design the permission matrix yourself before asking for feedback."}, {"id": "m5", "date": "November 2026", "title": "ReactJS Fundamentals + UI Architecture", "theme": "Build the frontend as a structured application, not just pages and buttons.", "why": "ReactJS introduces component and state management choices that directly affect performance, data loading, and user experience. This month helps you decide how to structure UI logic and keep frontend code maintainable.", "study": [["React foundations", "JSX, components, props, state, effects, conditional rendering, list rendering, and event handling."], ["Routing", "Client-side routing, nested routes, protected routes, layout patterns, and URL-driven state."], ["TypeScript UI", "Component props, event types, form types, API response types, discriminated unions, and type-safe UI states."], ["Forms", "Controlled inputs, validation, error summaries, pending states, optimistic updates, and dirty state handling."], ["Component system", "Primitives, layout components, feature components, composition, variants, and reusable patterns."], ["Frontend testing", "Component tests, interaction tests, mocked API responses, auth redirect tests, and visual edge cases."]], "todos": ["Create a ReactJS frontend project inside /frontend.", "Set up TypeScript, linting, formatting, and base folder structure.", "Create reusable UI components: Button, Input, Select, Modal, Table, Badge, EmptyState, ErrorState, LoadingState.", "Build login, dashboard, project list, task board, task details, and audit log pages.", "Implement filtering and pagination using URL query params.", "Add form validation and error summaries.", "Create loading, empty, error, unauthorized, and success states for major screens.", "Write at least one component test for a form with validation errors."], "drills": ["For each screen, label which components own state and which stay presentational.", "Create a UI state map for loading, empty, error, unauthorized, and success.", "Sketch the dashboard before coding it.", "Refactor repeated UI into reusable components after the first working version."], "project": "Build a ReactJS frontend for your Laravel Task API with auth screens, dashboard, CRUD flows, filtering, reusable UI components, and basic tests.", "outcome": "You can structure a ReactJS app and explain how state, routes, and UI responsibilities are divided.", "no_ai": "Avoid asking AI to design the UI. Sketch the screen layout yourself first, then ask for critique if needed."}, {"id": "m6", "date": "December 2026", "title": "Full-Stack Integration + API Contracts", "theme": "Make Laravel and ReactJS behave like one coherent product.", "why": "Many full-stack bugs are contract bugs: the frontend expects one shape, the backend returns another, auth behaves differently in dev and prod, or errors are inconsistent. This month focuses on integration discipline.", "study": [["API contracts", "Endpoint naming, request bodies, response bodies, validation errors, auth errors, pagination, filters, sorting, and date formats."], ["Typed API client", "Fetch wrappers, error normalization, typed responses, retry rules, aborting requests, and request deduping."], ["Auth integration", "Cookie/session or token flow, CSRF, CORS, redirects, protected routes, refresh behavior, and logout behavior."], ["Docker Compose integration", "Frontend, backend, database, queue, scheduler, reverse proxy, internal service names, and health checks."], ["E2E testing", "Login flow, create/update/delete, permission denial, empty states, and backend failure simulation."], ["Documentation", "OpenAPI-like docs, examples, sequence diagrams, environment setup, and troubleshooting notes."]], "todos": ["Create an API contract document for all current endpoints.", "Normalize backend error responses.", "Create a typed frontend API client wrapper.", "Make login survive refresh and direct URL navigation.", "Handle expired sessions and logout behavior cleanly.", "Run frontend, backend, database, queue, and scheduler with one Docker Compose command.", "Create E2E tests for login, create project, create task, update task, and permission denial.", "Write troubleshooting notes for CORS, CSRF, Docker networking, and auth issues."], "drills": ["Create a contract before coding one new endpoint.", "Simulate backend validation errors and display them clearly in the frontend.", "Break the backend response shape and observe how the frontend fails.", "Draw the login sequence from browser to backend to database and back."], "project": "Deliver an integrated full-stack task product with one-command startup, documented API contracts, auth flow, and E2E-tested core journey.", "outcome": "You can debug frontend/backend mismatches and design contracts that reduce integration friction.", "no_ai": "AI may help review an API contract, but you must write the first version from your own understanding of the feature."}, {"id": "m7", "date": "January 2027", "title": "Testing, Quality Gates + Maintainability", "theme": "Replace manual confidence with automated confidence.", "why": "You cannot grow into advanced full-stack work if every change requires manual clicking and fear. This month builds your quality system: tests, linting, static analysis, formatting, and review habits.", "study": [["Backend testing", "Unit tests, feature tests, database tests, factories, fake queues, fake notifications, and authorization tests."], ["Frontend testing", "Component tests, user interactions, forms, mocked API responses, auth redirects, and state transitions."], ["E2E testing", "Critical path tests, test data setup, cleanup, flaky test prevention, and browser assertions."], ["Static checks", "PHP formatting, static analysis, ESLint, TypeScript strictness, Prettier, and import boundaries."], ["CI pipeline", "Test order, caching dependencies, database service setup, artifacts, failure logs, and branch protection."], ["Refactoring", "Small commits, safe renaming, extracting functions/components, and proving behavior did not change."]], "todos": ["Add backend tests for every critical endpoint.", "Add authorization tests for every role.", "Add frontend tests for forms, error states, and auth redirects.", "Add E2E tests for the core happy path.", "Install and configure formatting/linting/static analysis tools.", "Create a local quality command that runs all important checks.", "Create a CI pipeline that runs tests and static checks.", "Refactor one messy backend module and one messy frontend area while keeping tests green."], "drills": ["Add a regression test for one bug from your bug journal.", "Break a policy intentionally and confirm tests catch it.", "Make one test fail, read the failure carefully, then fix the behavior.", "Write a pre-merge checklist for yourself."], "project": "Add quality gates to the full-stack repo: backend tests, frontend tests, E2E tests, static checks, formatting, and CI.", "outcome": "You can change code with confidence because behavior is protected by checks, not memory.", "no_ai": "Before asking AI to debug a failing test, write what the test proves and why you think it fails."}, {"id": "m8", "date": "February 2027", "title": "Advanced PostgreSQL + Performance", "theme": "Learn to diagnose slow data access instead of guessing.", "why": "Performance work should be measured. This month trains you to read query plans, understand indexing tradeoffs, and improve real bottlenecks without randomly adding indexes.", "study": [["EXPLAIN", "EXPLAIN, EXPLAIN ANALYZE, scan types, joins, sorts, costs, rows, buffers, and timing."], ["Indexing", "Btree, composite, partial, expression indexes, GIN for JSONB/text search, and index selectivity."], ["Query design", "Avoiding N+1 queries, reducing selected columns, filtering early, keyset pagination, and efficient counts."], ["Transactions and locks", "Row locks, deadlocks, isolation basics, lock wait symptoms, and retry behavior."], ["Database maintenance", "VACUUM, ANALYZE, statistics, migrations on larger tables, backups, and restore drills."], ["Laravel performance", "Eager loading, chunking, cursor pagination, caching query results, and queueing expensive work."]], "todos": ["Seed 50k+ realistic rows across tasks, comments, and audit logs.", "Identify 5 slow endpoints or screens.", "Capture baseline timings before optimization.", "Run EXPLAIN ANALYZE for the slowest queries.", "Fix one N+1 issue and prove the query count drops.", "Add or adjust indexes only after measuring.", "Compare offset pagination and cursor pagination.", "Write a performance report with before/after results."], "drills": ["Read one query plan and annotate the suspected bottleneck.", "Remove an index and observe what gets slower.", "Add a composite index and explain why column order matters.", "Paginate a large audit log table using both offset and cursor approaches."], "project": "Create a performance report with slow query evidence, query plans, index decisions, before/after timings, and screenshots/logs.", "outcome": "You can improve performance using evidence instead of superstition.", "no_ai": "AI may help explain a query plan, but first annotate the plan yourself: suspected bottleneck, reason, and proposed fix."}, {"id": "m9", "date": "March 2027", "title": "Security Fundamentals for Real Apps", "theme": "Build defensively across frontend, backend, database, and infrastructure.", "why": "Security is not one feature. It is a collection of design habits: validate input, authorize actions, protect sessions, store secrets safely, log important events, and assume users will do unexpected things.", "study": [["OWASP mapping", "Broken access control, injection, XSS, insecure design, misconfiguration, vulnerable dependencies, auth failures, and logging gaps."], ["Auth hardening", "Password rules, login throttling, lockouts, session expiration, token storage, MFA-ready design, and logout invalidation."], ["Authorization bugs", "IDOR, ownership checks, admin-only actions, mass assignment, hidden UI vs enforced backend permission."], ["Frontend security", "XSS prevention, escaping, safe HTML rendering, secure redirects, form abuse, and leaking secrets to the client."], ["Backend security", "Validation, SQL injection prevention, request size limits, file upload safety, SSRF prevention, and safe error messages."], ["Docker/security ops", "Secrets, non-root containers, dependency scans, image updates, minimal images, and secure env handling."]], "todos": ["Write a threat model for your app.", "Test IDOR by changing route IDs and API payload IDs.", "Test mass assignment by sending fields not exposed in the UI.", "Review every endpoint for authentication and authorization.", "Add security event logs for suspicious actions.", "Check that secrets are not exposed to frontend bundles or committed files.", "Add tests proving permission and ownership checks cannot be bypassed.", "Create a security checklist for future features."], "drills": ["Try to access another user's project by changing an ID.", "Try to update protected fields through direct API calls.", "Trigger failed login rate limits and inspect the response.", "Review error messages and remove sensitive details."], "project": "Run a security review of your app, fix the highest-risk issues, and add tests proving IDOR/mass assignment/permission bugs are blocked.", "outcome": "You can think like both a builder and an attacker, then turn risks into concrete safeguards.", "no_ai": "Do not ask AI for a security checklist until you write your own based on the actual app features."}, {"id": "m10", "date": "April 2027", "title": "Deployment, CI/CD + Operations", "theme": "Deploy the app safely and learn what it means to operate it.", "why": "A project is not production-ready just because it works locally. This month covers builds, migrations, queues, logs, backups, rollback plans, and the operational details that make apps dependable.", "study": [["Production Docker", "Multi-stage builds, image size, non-root users, health checks, environment variables, and startup commands."], ["Reverse proxy", "Nginx routing, HTTPS assumptions, Laravel public directory, ReactJS runtime, static assets, and headers."], ["CI/CD", "Install dependencies, run checks, build images, push artifacts, migrate database, deploy, and rollback."], ["Runtime processes", "Web server, PHP-FPM, queue worker, scheduler, ReactJS server, database, cache, and logs."], ["Observability", "Structured logs, error tracking, uptime checks, metrics, health endpoints, and alert thresholds."], ["Backups", "PostgreSQL dumps, restore testing, storage retention, migration safety, and disaster recovery notes."]], "todos": ["Create production Dockerfiles separate from local Dockerfiles.", "Create a production-like Compose file or deployment setup.", "Configure reverse proxy routing for frontend and backend.", "Add health checks for frontend, backend, queue, and database.", "Create a CI/CD workflow for test, build, and deploy.", "Create a database backup script.", "Restore a backup into a clean database to prove it works.", "Write a rollback plan for failed migrations or failed deploys."], "drills": ["Deploy to a staging VPS or local production-like VM.", "Intentionally break a deployment and recover using logs.", "Run a migration failure drill.", "Restart queue workers and confirm background jobs still process."], "project": "Deploy a staging environment with CI/CD, production Docker setup, logs, health checks, backup/restore docs, and rollback procedure.", "outcome": "You can explain how your app runs after deployment and how to recover when something breaks.", "no_ai": "AI may help explain deployment errors, but you must collect logs from each service first."}, {"id": "m11", "date": "May 2027", "title": "Architecture, Scaling + System Design", "theme": "Refactor into clearer boundaries and explain technical tradeoffs.", "why": "Advanced developers are not just faster coders. They can design systems, explain tradeoffs, reduce complexity, and choose boring solutions when they are better.", "study": [["Module boundaries", "Auth, users, projects, tasks, comments, audit logs, notifications, admin, and reporting modules."], ["Backend architecture", "Controllers, actions/services, DTOs, policies, events, jobs, repositories when justified, and domain rules."], ["Frontend architecture", "Feature folders, shared UI, hooks, API clients, server/client component boundaries, and state ownership."], ["Scaling patterns", "Caching, queues, background jobs, read/write paths, pagination, rate limits, and database indexing."], ["System design", "Sequence diagrams, data flow diagrams, component diagrams, bottleneck analysis, and failure modes."], ["Decision records", "Architecture Decision Records: context, decision, alternatives, consequences, and revisit date."]], "todos": ["Map the current backend modules and frontend modules.", "Identify the messiest feature boundary and refactor it.", "Write 5 architecture decision records.", "Draw sequence diagrams for login, task assignment, notification, and audit logging.", "Create a module map for the app.", "List the top 5 scaling risks.", "Write practical mitigations for each scaling risk.", "Practice explaining the architecture in under 10 minutes."], "drills": ["Refactor one feature into a clean module with clear boundaries.", "Explain when a repository class is useful and when it is unnecessary.", "Draw the difference between synchronous and queued workflows.", "Review one feature and identify where complexity is accidental."], "project": "Create an architecture pack: ERD, sequence diagrams, module map, ADRs, scaling plan, failure modes, and maintenance notes.", "outcome": "You can reason about structure, tradeoffs, and long-term maintainability instead of only implementing tickets.", "no_ai": "Do not ask AI for architecture until you draw the current system and list the pain points yourself."}, {"id": "m12", "date": "June 2027", "title": "Capstone Polish + Portfolio Delivery", "theme": "Finish a production-grade app and prove you can build independently.", "why": "The final month is about completion, not adding endless features. You will polish, test, document, deploy, and present the product as evidence of practical full-stack skill.", "study": [["Scope control", "Feature freeze, bug triage, must-have vs nice-to-have, release checklist, and known limitations."], ["Product polish", "Responsive layout, empty states, loading states, error states, accessibility, keyboard navigation, and copy clarity."], ["Technical polish", "Tests, security fixes, performance fixes, deployment docs, backup docs, and environment docs."], ["Documentation", "README, setup guide, architecture overview, API contracts, screenshots, demo script, and case study."], ["Presentation", "Problem, users, features, architecture, tradeoffs, demo flow, challenges, and lessons learned."], ["Independence review", "Identify what you can now do without AI and what still needs deliberate practice."]], "todos": ["Freeze new features by Week 2.", "Fix the highest-impact UI/UX rough edges.", "Complete README, setup guide, architecture overview, and API contract docs.", "Run all backend, frontend, and E2E tests.", "Run the security checklist.", "Run the performance checklist.", "Record a 3–5 minute demo video.", "Write a technical case study.", "Rebuild one core feature from scratch without AI as a final independence test."], "drills": ["Run setup instructions on a clean machine or clean container.", "Ask someone else to try the app and record friction points.", "Remove or document incomplete features instead of hiding them.", "Practice a short verbal explanation of the app architecture."], "project": "Ship a portfolio-ready full-stack capstone with live/staging demo, clean repo, README, architecture notes, tests, deployment guide, and case study.", "outcome": "You finish the year with a real project, a stronger mental model, and proof that you can build without being dependent on AI.", "no_ai": "AI can review the final case study or README, but not generate the core feature code for you."}];
+    const storagePrefix = "fullstack-roadmap-easy-ui-v2:";
+    const page = document.getElementById("page");
+    const sideNav = document.getElementById("sideNav");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const resetBtn = document.getElementById("resetBtn");
+    const overviewBtn = document.getElementById("overviewBtn");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+
+    let selectedId = localStorage.getItem(storagePrefix + "selected") || "overview";
+    let isSidebarCollapsed = localStorage.getItem(storagePrefix + "sidebar-collapsed") === "true";
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function todoIds(item) {
+      return item.todos.map((_, index) => item.id + "-todo-" + index);
+    }
+
+    function reviewIds(item) {
+      return [
+        item.id + "-notes",
+        item.id + "-drills",
+        item.id + "-project",
+        item.id + "-review"
+      ];
+    }
+
+    function allIds(item) {
+      return [...todoIds(item), ...reviewIds(item)];
+    }
+
+    function isChecked(id) {
+      return localStorage.getItem(storagePrefix + "check:" + id) === "true";
+    }
+
+    function setChecked(id, value) {
+      localStorage.setItem(storagePrefix + "check:" + id, String(value));
+    }
+
+    function getItemProgress(item) {
+      const ids = allIds(item);
+      const done = ids.filter(isChecked).length;
+      return { done, total: ids.length, pct: Math.round((done / ids.length) * 100) };
+    }
+
+    function getTotalProgress() {
+      const ids = pages.flatMap(allIds);
+      const done = ids.filter(isChecked).length;
+      return { done, total: ids.length, pct: Math.round((done / ids.length) * 100) };
+    }
+
+    function pageNumber(item, index) {
+      if (item.id === "overview") return "OV";
+      if (item.id === "rules") return "RL";
+      const monthlyIndex = pages.filter((entry) => entry.kind !== "meta").findIndex((entry) => entry.id === item.id) + 1;
+      return String(monthlyIndex).padStart(2, "0");
+    }
+
+    function renderNav() {
+      const metaItems = pages.filter((item) => item.kind === "meta");
+      const monthItems = pages.filter((item) => item.kind !== "meta");
+      const current = pages.find((item) => item.id === selectedId) || pages[0];
+      const currentProgress = getItemProgress(current);
+      const currentIndex = pages.findIndex((item) => item.id === current.id);
+      const prev = pages[currentIndex - 1];
+      const next = pages[currentIndex + 1];
+
+      function navButton(item, index) {
+        const progress = getItemProgress(item);
+        const shortDate = item.kind === "meta"
+          ? item.date
+          : item.date.replace(" 2026", "").replace(" 2027", "");
+
+        return `
+          <button type="button" class="${item.id === selectedId ? "active" : ""}" data-id="${escapeHtml(item.id)}">
+            <span class="num">${pageNumber(item, index)}</span>
+            <span class="label">
+              <b>${escapeHtml(item.nav || item.title)}</b>
+              <span>${escapeHtml(shortDate)}</span>
+            </span>
+            <span class="done">${progress.done}/${progress.total}</span>
+          </button>
+        `;
+      }
+
+      function navChip(item, label) {
+        return `
+          <button
+            type="button"
+            class="nav-chip ${item.kind === "meta" ? "meta" : ""} ${item.id === selectedId ? "active" : ""}"
+            data-id="${escapeHtml(item.id)}"
+          >${escapeHtml(label)}</button>
+        `;
+      }
+
+      sideNav.innerHTML = `
+        <div class="nav-desktop">
+          <div class="nav-title">General</div>
+          ${metaItems.map(navButton).join("")}
+          <div class="nav-title">Monthly Plan</div>
+          ${monthItems.map(navButton).join("")}
+        </div>
+        <div class="nav-mobile">
+          <div class="nav-current">
+            <span class="nav-current-label">Now Viewing</span>
+            <span class="nav-current-title">${escapeHtml(current.nav || current.title)}</span>
+            <span class="nav-current-meta">${escapeHtml(current.date)} • ${currentProgress.done}/${currentProgress.total}</span>
+            <div class="nav-current-actions">
+              <button class="nav-current-btn" type="button" data-nav-jump="prev" ${prev ? "" : "disabled"}>← Previous</button>
+              <button class="nav-current-btn" type="button" data-nav-jump="next" ${next ? "" : "disabled"}>Next →</button>
+            </div>
+          </div>
+          <div class="nav-mobile-row">
+            <div class="nav-mobile-title">General</div>
+            <div class="nav-chip-grid">
+              ${metaItems.map((item) => navChip(item, item.id === "overview" ? "Start" : "Rules")).join("")}
+            </div>
+          </div>
+          <div class="nav-mobile-row">
+            <div class="nav-mobile-title">Months</div>
+            <div class="nav-chip-grid">
+              ${monthItems.map((item, index) => navChip(item, String(index + 1))).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      sideNav.querySelectorAll("button[data-id]").forEach((button) => {
+        button.addEventListener("click", () => selectPage(button.dataset.id));
+      });
+
+      sideNav.querySelectorAll("button[data-nav-jump]").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (button.dataset.navJump === "prev" && prev) selectPage(prev.id);
+          if (button.dataset.navJump === "next" && next) selectPage(next.id);
+        });
+      });
+    }
+
+    function renderProgress() {
+      const progress = getTotalProgress();
+      progressText.textContent = progress.pct + "%";
+      progressBar.style.width = progress.pct + "%";
+    }
+
+    function renderSidebarState() {
+      sidebar.classList.toggle("is-collapsed", isSidebarCollapsed);
+      sidebarToggle.textContent = isSidebarCollapsed ? "Show" : "Hide";
+      sidebarToggle.setAttribute("aria-expanded", String(!isSidebarCollapsed));
+    }
+
+    function studyHtml(items) {
+      return items.map(([title, desc]) => `
+        <div class="study-item">
+          <b>${escapeHtml(title)}</b>
+          <p>${escapeHtml(desc)}</p>
+        </div>
+      `).join("");
+    }
+
+    function todoHtml(item) {
+      return item.todos.map((todo, index) => {
+        const id = item.id + "-todo-" + index;
+        const checked = isChecked(id);
+        return `
+          <label class="todo-item ${checked ? "done" : ""}">
+            <input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? "checked" : ""}>
+            <span>${escapeHtml(todo)}</span>
+          </label>
+        `;
+      }).join("");
+    }
+
+    function drillsHtml(items) {
+      return items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+    }
+
+    function reviewChecklistHtml(item) {
+      const labels = [
+        [item.id + "-notes", "Wrote personal notes in your own words"],
+        [item.id + "-drills", "Completed the drills and recorded what was hard"],
+        [item.id + "-project", "Built and documented the mini-project"],
+        [item.id + "-review", "Finished the monthly review and weak-point list"]
+      ];
+
+      return labels.map(([id, label]) => {
+        const checked = isChecked(id);
+        return `
+          <label class="${checked ? "done" : ""}">
+            <input type="checkbox" data-check-id="${escapeHtml(id)}" ${checked ? "checked" : ""}>
+            <span>${escapeHtml(label)}</span>
+          </label>
+        `;
+      }).join("");
+    }
+
+    function renderPage(id) {
+      const item = pages.find((entry) => entry.id === id) || pages[0];
+      const index = pages.findIndex((entry) => entry.id === item.id);
+      const prev = pages[index - 1];
+      const next = pages[index + 1];
+      const progress = getItemProgress(item);
+
+      page.innerHTML = `
+        <header class="page-head">
+          <div>
+            <div class="date">${escapeHtml(item.date)}</div>
+            <h2>${escapeHtml(item.title)}</h2>
+            <p class="theme">${escapeHtml(item.theme)}</p>
+          </div>
+          <div class="head-actions">
+            <button class="page-nav-btn" id="prevBtn" type="button" ${prev ? "" : "disabled"}>← Previous</button>
+            <button class="page-nav-btn" id="nextBtn" type="button" ${next ? "" : "disabled"}>Next →</button>
+          </div>
+        </header>
+
+        <section class="focus-strip">
+          <div class="summary-card">
+            <b>Mini-project</b>
+            <p>${escapeHtml(item.project)}</p>
+          </div>
+          <div class="summary-card">
+            <b>Expected outcome</b>
+            <p>${escapeHtml(item.outcome)}</p>
+          </div>
+          <div class="summary-card">
+            <b>Page progress</b>
+            <p>${progress.done}/${progress.total} items complete. Use this as a light monthly tracker, not a pressure meter.</p>
+          </div>
+        </section>
+
+        <section class="layout">
+          <div class="left">
+            <div class="card">
+              <div class="card-head">
+                <h3>Learning context</h3>
+                <span>What to study and why</span>
+              </div>
+              <div class="card-body">
+                <div class="why">
+                  <b>Why this matters</b>
+                  ${escapeHtml(item.why)}
+                </div>
+                <div class="study-list">
+                  ${studyHtml(item.study)}
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Practical drills</h3>
+                <span>Build muscle memory</span>
+              </div>
+              <div class="card-body">
+                <ol class="drills">${drillsHtml(item.drills)}</ol>
+              </div>
+            </div>
+          </div>
+
+          <aside class="right">
+            <div class="card">
+              <div class="card-head">
+                <h3>Monthly to-do</h3>
+                <span>Action checklist</span>
+              </div>
+              <div class="card-body">
+                <div class="todo-list">
+                  ${todoHtml(item)}
+                </div>
+              </div>
+            </div>
+
+            <div class="info ai">
+              <b>Minimal-AI rule</b>
+              <p>${escapeHtml(item.no_ai)}</p>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Completion checks</h3>
+                <span>End-of-page review</span>
+              </div>
+              <div class="card-body">
+                <div class="checklist">
+                  ${reviewChecklistHtml(item)}
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-head">
+                <h3>Review prompt</h3>
+                <span>Copy into notes</span>
+              </div>
+              <div class="card-body">
+                <div class="review-template">Month/Page:
+Main focus:
+What I built:
+What I can explain without AI:
+Most important concepts learned:
+Weakest concepts:
+Bugs encountered:
+Root cause patterns:
+Tests/checks added:
+What I would do differently:
+Next priority:</div>
+              </div>
+            </div>
+          </aside>
+        </section>
+
+        <p class="footer-note">Tip: keep the to-do list practical. If a task feels too large, split it into a smaller commit-sized task in your actual project tracker.</p>
+      `;
+
+      document.getElementById("prevBtn").addEventListener("click", () => {
+        if (prev) selectPage(prev.id);
+      });
+
+      document.getElementById("nextBtn").addEventListener("click", () => {
+        if (next) selectPage(next.id);
+      });
+
+      page.querySelectorAll("input[data-check-id]").forEach((input) => {
+        input.addEventListener("change", () => {
+          setChecked(input.dataset.checkId, input.checked);
+          renderProgress();
+          renderNav();
+          renderPage(selectedId);
+        });
+      });
+    }
+
+    function selectPage(id) {
+      selectedId = id;
+      localStorage.setItem(storagePrefix + "selected", selectedId);
+      renderNav();
+      renderPage(selectedId);
+      renderProgress();
+    }
+
+    resetBtn.addEventListener("click", () => {
+      if (!confirm("Reset all saved roadmap progress?")) return;
+      pages.flatMap(allIds).forEach((id) => {
+        localStorage.removeItem(storagePrefix + "check:" + id);
+      });
+      renderNav();
+      renderPage(selectedId);
+      renderProgress();
+    });
+
+    overviewBtn.addEventListener("click", () => selectPage("overview"));
+    sidebarToggle.addEventListener("click", () => {
+      isSidebarCollapsed = !isSidebarCollapsed;
+      localStorage.setItem(storagePrefix + "sidebar-collapsed", String(isSidebarCollapsed));
+      renderSidebarState();
+    });
+
+    renderSidebarState();
+    renderNav();
+    renderPage(selectedId);
+    renderProgress();
+  </script>
+</body>
+</html>
